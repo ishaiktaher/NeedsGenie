@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "name": "Rakesh Agent",
+    "phone": "9999999999",
+    "categories": [
+      "Residential Rentals",
+      "Used Cars"
+    ],
+    "localities": "Kukatpally, Miyapur",
+    "verified": true
+  }
+]
