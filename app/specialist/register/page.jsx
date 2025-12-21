@@ -3,20 +3,31 @@
 import { useState } from "react";
 import Button from "@/components/Button";
 import Spinner from "@/components/Spinner";
+import AutocompleteInput from "@/components/AutocompleteInput";
+import {
+  searchCities,
+  searchLocalities,
+} from "@/lib/locationSearch";
+import ChipInput from "@/components/ChipInput";
+
+import { INDIAN_STATES } from "@/lib/indianStates";
+import SearchableSelect from "@/components/SearchableSelect";
 
 export default function SpecialistRegister() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
+
   const [form, setForm] = useState({
     fullName: "",
     mobile: "",
     whatsapp: "",
-    city: "",
-    localities: "",
+    state: "",
+    city: [],
+    localities: [],
     industries: "",
-    languages: "",
+    languages: [],
     payPerLead: "",
     bestTime: "",
   });
@@ -38,9 +49,14 @@ export default function SpecialistRegister() {
     if (!form.fullName.trim()) e.fullName = "Full name is required";
     if (!/^\d{10}$/.test(form.mobile))
       e.mobile = "Enter a valid 10-digit mobile number";
-    if (!form.city.trim()) e.city = "City is required";
-    if (!form.localities.trim())
-      e.localities = "Localities are required";
+    if (!Array.isArray(form.city) || form.city.length === 0) {
+      e.city = "Please add at least one city";
+    }
+
+    if (!Array.isArray(form.localities) || form.localities.length === 0) {
+      e.localities = "Please add at least one locality";
+    }
+
 
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -57,6 +73,7 @@ export default function SpecialistRegister() {
       e.payPerLead = "Please select an option";
     if (!form.bestTime.trim())
       e.bestTime = "Best time is required";
+    if (!form.state.trim()) e.state = "State is required";
 
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -136,19 +153,65 @@ export default function SpecialistRegister() {
               }
             />
 
-            <Input
+            <SearchableSelect
+              label="State *"
+              value={form.state}
+              options={INDIAN_STATES}
+              placeholder="Select state"
+              onChange={(v) => {
+                setField("state", v);
+                setField("city", []);
+                setField("localities", []);
+              }}
+              error={errors.state}
+            />
+
+
+            {/* <AutocompleteInput
               label="City *"
               value={form.city}
+              disabled={!form.state}
+              fetchOptions={(q) => searchCities(q, form.state)}
+              onChange={(v) => {
+                setField("city", v);
+                setSelectedCity(null);
+                setField("localities", "");
+              }}
+              onSelect={(city) => {
+                setField("city", city.label);
+                setSelectedCity(city);
+                setField("localities", "");
+              }}
+              error={errors.city}
+            /> */}
+
+            <ChipInput
+              label="Cities you serve *"
+              value={form.city}
               onChange={(v) => setField("city", v)}
+              placeholder="Type city and press comma"
               error={errors.city}
             />
 
-            <Input
+
+
+            {/* <AutocompleteInput
+              label="Localities / Areas you serve *"
+              value={form.localities}
+              disabled={!selectedCity}
+              fetchOptions={(q) => searchLocalities(q, selectedCity)}
+              onChange={(v) => setField("localities", v)}
+              error={errors.localities}
+            /> */}
+            <ChipInput
               label="Localities / Areas you serve *"
               value={form.localities}
               onChange={(v) => setField("localities", v)}
+              placeholder="Type area and press comma or click outside"
               error={errors.localities}
             />
+
+
 
             <div className="mt-8 flex justify-center">
               <Button
@@ -187,14 +250,28 @@ export default function SpecialistRegister() {
               onChange={(v) => setField("payPerLead", v)}
               error={errors.payPerLead}
             />
-
+{/* 
             <Input
               label="Best time to contact you *"
               placeholder="Morning / Afternoon / Evening"
               value={form.bestTime}
               onChange={(v) => setField("bestTime", v)}
               error={errors.bestTime}
+            /> */}
+
+            <Select
+              label="Best time to contact you *"
+              value={form.bestTime}
+              options={[
+                "Morning",
+                "Afternoon",
+                "Evening",
+                "Anytime",
+              ]}
+              onChange={(v) => setField("bestTime", v)}
+              error={errors.bestTime}
             />
+
 
             <div className="mt-6 flex justify-between">
               <button
@@ -245,9 +322,8 @@ function Input({ label, placeholder, value, onChange, error, numeric }) {
         placeholder={placeholder}
         inputMode={numeric ? "numeric" : undefined}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full rounded-lg border px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none ${
-          error ? "border-red-500" : "border-gray-300"
-        }`}
+        className={`w-full rounded-lg border px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none ${error ? "border-red-500" : "border-gray-300"
+          }`}
       />
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
@@ -263,9 +339,8 @@ function Select({ label, options, value, onChange, error }) {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full rounded-lg border px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none ${
-          error ? "border-red-500" : "border-gray-300"
-        }`}
+        className={`w-full rounded-lg border px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none ${error ? "border-red-500" : "border-gray-300"
+          }`}
       >
         <option value="">Select</option>
         {options.map((o) => (

@@ -1,7 +1,7 @@
 import { sheets, SPECIALIST_SHEET_ID } from "@/lib/googleSheets";
 import { NextResponse } from "next/server";
 
-const RANGE = "Form Responses 1!A:J"; // Header row + data rows
+const RANGE = "Form Responses 1!A:K"; // Updated to match columns
 
 export async function POST(req) {
   try {
@@ -9,24 +9,39 @@ export async function POST(req) {
 
     const timestamp = new Date().toLocaleString("en-IN");
 
+    // ✅ Normalize array fields for Google Sheets
+    const cities =
+      Array.isArray(body.city) ? body.city.join(", ") : body.city || "";
+
+    const localities =
+      Array.isArray(body.localities)
+        ? body.localities.join(", ")
+        : body.localities || "";
+
+    const languages =
+      Array.isArray(body.languages)
+        ? body.languages.join(", ")
+        : body.languages || "";
+
     const row = [
-      timestamp,           // A: Timestamp
-      body.fullName || "", // B
-      body.mobile || "",   // C
-      body.whatsapp || "", // D
-      body.city || "",     // E
-      body.localities || "", // F
-      body.industries || "", // G
-      body.languages || "",  // H
-      body.payPerLead || "", // I
-      body.bestTime || "",   // J
+      timestamp,                // A: Timestamp
+      body.fullName || "",      // B
+      body.mobile || "",        // C
+      body.whatsapp || "",      // D
+      body.state || "",         // E
+      cities,                   // F: Cities (comma-separated)
+      localities,               // G: Localities (comma-separated)
+      body.industries || "",    // H
+      languages,                // I: Languages (comma-separated)
+      body.payPerLead || "",    // J
+      body.bestTime || "",      // K
     ];
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPECIALIST_SHEET_ID,
       range: RANGE,
       valueInputOption: "USER_ENTERED",
-      insertDataOption: "INSERT_ROWS", // ✅ THIS FIXES IT
+      insertDataOption: "INSERT_ROWS",
       requestBody: {
         values: [row],
       },
