@@ -12,6 +12,9 @@ import ChipInput from "@/components/ChipInput";
 
 import { INDIAN_STATES } from "@/lib/indianStates";
 import SearchableSelect from "@/components/SearchableSelect";
+import CreatableMultiSelect from "@/components/CreatableMultiSelect";
+import { INDUSTRIES } from "@/lib/industries";
+import { LANGUAGES } from "@/lib/languages";
 
 export default function SpecialistRegister() {
   const [step, setStep] = useState(1);
@@ -26,7 +29,7 @@ export default function SpecialistRegister() {
     state: "",
     city: [],
     localities: [],
-    industries: "",
+    industries: [],
     languages: [],
     payPerLead: "",
     bestTime: "",
@@ -47,16 +50,15 @@ export default function SpecialistRegister() {
     const e = {};
 
     if (!form.fullName.trim()) e.fullName = "Full name is required";
+    if (!form.state.trim()) e.state = "State is required";
     if (!/^\d{10}$/.test(form.mobile))
       e.mobile = "Enter a valid 10-digit mobile number";
     if (!Array.isArray(form.city) || form.city.length === 0) {
       e.city = "Please add at least one city";
     }
-
     if (!Array.isArray(form.localities) || form.localities.length === 0) {
       e.localities = "Please add at least one locality";
     }
-
 
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -64,16 +66,16 @@ export default function SpecialistRegister() {
 
   const validateStep2 = () => {
     const e = {};
-
-    if (!form.industries.trim())
-      e.industries = "Please specify industries";
-    if (!form.languages.trim())
-      e.languages = "Please specify languages";
+    if (!Array.isArray(form.industries) || form.industries.length === 0) {
+      e.industries = "Please select at least one industry";
+    }
+    if (!Array.isArray(form.languages) || form.languages.length === 0) {
+      e.languages = "Please select at least one language";
+    }
     if (!form.payPerLead)
       e.payPerLead = "Please select an option";
     if (!form.bestTime.trim())
       e.bestTime = "Best time is required";
-    if (!form.state.trim()) e.state = "State is required";
 
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -87,9 +89,41 @@ export default function SpecialistRegister() {
     try {
       setLoading(true);
 
+      const normalizedForm = {
+        ...form,
+        industries: [
+          ...new Set(
+            form.industries.map((i) =>
+              i.trim().replace(/\s+/g, " ")
+            )
+          ),
+        ],
+        languages: [
+          ...new Set(
+            form.languages.map((l) =>
+              l.trim().replace(/\s+/g, " ")
+            )
+          ),
+        ],
+        city: [
+          ...new Set(
+            form.city.map((c) =>
+              c.trim().replace(/\s+/g, " ")
+            )
+          ),
+        ],
+        localities: [
+          ...new Set(
+            form.localities.map((a) =>
+              a.trim().replace(/\s+/g, " ")
+            )
+          ),
+        ],
+      };
+
       const res = await fetch("/api/register-specialist", {
         method: "POST",
-        body: JSON.stringify(form),
+        body: JSON.stringify(normalizedForm),
         headers: {
           "Content-Type": "application/json",
         },
@@ -103,6 +137,7 @@ export default function SpecialistRegister() {
       setLoading(false);
     }
   };
+
 
   /* ---------------- UI ---------------- */
 
@@ -227,21 +262,25 @@ export default function SpecialistRegister() {
         {/* STEP 2 */}
         {step === 2 && (
           <div className="space-y-4">
-            <Input
+            <CreatableMultiSelect
               label="Industries you work in *"
-              placeholder="Real Estate, Loans, Cars..."
               value={form.industries}
+              options={INDUSTRIES}
+              placeholder="Type or select industry"
               onChange={(v) => setField("industries", v)}
               error={errors.industries}
             />
 
-            <Input
+
+            <CreatableMultiSelect
               label="Languages you speak *"
-              placeholder="English, Hindi, Telugu..."
               value={form.languages}
+              options={LANGUAGES}
+              placeholder="Type or select languages"
               onChange={(v) => setField("languages", v)}
               error={errors.languages}
             />
+
 
             <Select
               label="Are you willing to pay a small fee per verified lead? *"
@@ -250,7 +289,7 @@ export default function SpecialistRegister() {
               onChange={(v) => setField("payPerLead", v)}
               error={errors.payPerLead}
             />
-{/* 
+            {/* 
             <Input
               label="Best time to contact you *"
               placeholder="Morning / Afternoon / Evening"

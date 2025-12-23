@@ -26,9 +26,12 @@ export default function ChipInput({
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "," || e.key === "Enter") {
+    if (e.key === "," || e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       addChip(input);
+    } else if (e.key === "Backspace" && !input) {
+      removeChip(value[value.length - 1]);
+      setInput(value[value.length - 1]);
     }
   };
 

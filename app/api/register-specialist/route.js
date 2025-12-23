@@ -22,6 +22,11 @@ export async function POST(req) {
       Array.isArray(body.languages)
         ? body.languages.join(", ")
         : body.languages || "";
+    
+    const industries =
+      Array.isArray(body.industries)
+        ? body.industries.join(", ")
+        : body.industries || "";
 
     const row = [
       timestamp,                // A: Timestamp
@@ -31,7 +36,7 @@ export async function POST(req) {
       body.state || "",         // E
       cities,                   // F: Cities (comma-separated)
       localities,               // G: Localities (comma-separated)
-      body.industries || "",    // H
+      industries,               // H: Industries (comma-separated)
       languages,                // I: Languages (comma-separated)
       body.payPerLead || "",    // J
       body.bestTime || "",      // K
