@@ -15,12 +15,14 @@ import SearchableSelect from "@/components/SearchableSelect";
 import CreatableMultiSelect from "@/components/CreatableMultiSelect";
 import { INDUSTRIES } from "@/lib/industries";
 import { LANGUAGES } from "@/lib/languages";
+import useScrollIntoView from "@/hooks/useScrollIntoView";
+
 
 export default function SpecialistRegister() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-
+  const cityScroll = useScrollIntoView();
 
   const [form, setForm] = useState({
     fullName: "",
@@ -138,11 +140,12 @@ export default function SpecialistRegister() {
     }
   };
 
-
   /* ---------------- UI ---------------- */
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center px-6 py-10">
+    // <main className="min-h-screen bg-gray-50 flex items-center justify-center px-6 py-10">
+    <main className="min-h-screen bg-gray-50 px-4 py-6 pb-[40vh] sm:pb-0 sm:flex sm:items-center sm:justify-center">
+
       <div className="w-full max-w-xl bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
 
         {/* HEADER */}
@@ -163,6 +166,7 @@ export default function SpecialistRegister() {
         {step === 1 && (
           <div className="space-y-4">
             <Input
+              tabIndex={1}
               label="Full Name *"
               value={form.fullName}
               onChange={(v) => setField("fullName", v)}
@@ -170,6 +174,7 @@ export default function SpecialistRegister() {
             />
 
             <Input
+              tabIndex={2}
               label="Mobile Number *"
               value={form.mobile}
               numeric
@@ -180,6 +185,7 @@ export default function SpecialistRegister() {
             />
 
             <Input
+              tabIndex={3}
               label="WhatsApp Number (optional)"
               value={form.whatsapp}
               numeric
@@ -189,6 +195,7 @@ export default function SpecialistRegister() {
             />
 
             <SearchableSelect
+              tabIndex={4}
               label="State *"
               value={form.state}
               options={INDIAN_STATES}
@@ -200,7 +207,6 @@ export default function SpecialistRegister() {
               }}
               error={errors.state}
             />
-
 
             {/* <AutocompleteInput
               label="City *"
@@ -221,14 +227,15 @@ export default function SpecialistRegister() {
             /> */}
 
             <ChipInput
+              tabIndex={5}
+              ref={cityScroll.ref}
+              onFocus={cityScroll.onFocus}
               label="Cities you serve *"
               value={form.city}
               onChange={(v) => setField("city", v)}
               placeholder="Type city and press comma"
               error={errors.city}
             />
-
-
 
             {/* <AutocompleteInput
               label="Localities / Areas you serve *"
@@ -239,6 +246,7 @@ export default function SpecialistRegister() {
               error={errors.localities}
             /> */}
             <ChipInput
+              tabIndex={6}
               label="Localities / Areas you serve *"
               value={form.localities}
               onChange={(v) => setField("localities", v)}
@@ -246,10 +254,9 @@ export default function SpecialistRegister() {
               error={errors.localities}
             />
 
-
-
             <div className="mt-8 flex justify-center">
               <Button
+                tabIndex={7}
                 onClick={() => validateStep1() && setStep(2)}
                 className="px-8 py-3 text-lg min-w-[200px]"
               >

@@ -1,14 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState , forwardRef} from "react";
 
-export default function ChipInput({
-  label,
-  value = [],
-  onChange,
-  placeholder = "Type and press comma",
-  error,
-}) {
+const ChipInput = forwardRef(({ onFocus, label, value = [], onChange, placeholder = "Type and press comma", error }, ref) => {
   const [input, setInput] = useState("");
   const wrapperRef = useRef(null);
 
@@ -79,6 +73,8 @@ export default function ChipInput({
         ))}
 
         <input
+        ref={ref}
+        onFocus={onFocus}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -91,3 +87,6 @@ export default function ChipInput({
     </div>
   );
 }
+);
+
+export default ChipInput;

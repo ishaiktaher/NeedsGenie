@@ -7,7 +7,7 @@ export default function Home() {
       <div className="mt-1">{icon}</div>
       <div>
         <h3 className="font-semibold text-gray-900">{title}</h3>
-        <p className="text-gray-600 mt-1 leading-relaxed">{text}</p>
+        <p className="text-gray-600 mt-1 leading-snug">{text}</p>
       </div>
     </div>
   );
@@ -16,10 +16,28 @@ export default function Home() {
     <main>
       {/* HERO */}
       <section className="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white">
-        <div className="max-w-7xl mx-auto px-6 py-24 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <div
+          className="
+            max-w-7xl mx-auto
+            px-4
+            pt-10 pb-14
+            sm:px-6 sm:py-24
+            grid grid-cols-1 md:grid-cols-2
+            gap-10 sm:gap-16
+            items-center
+          "
+        >
           {/* LEFT */}
           <div>
-            <h1 className="text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
+            <h1
+              className="
+              text-3xl sm:text-4xl md:text-5xl
+              font-extrabold
+              leading-tight
+              tracking-tight
+              mt-0
+            "
+            >
               Tell us what you need.
               <br />
               <span className="text-blue-600">
@@ -27,15 +45,26 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="mt-6 text-lg text-gray-600 max-w-xl">
+            <p className="mt-4 sm:mt-6 text-base sm:text-lg text-gray-600 max-w-xl">
               Post your requirement once. Verified professionals reach out with
               real solutions — no spam, no listings.
             </p>
 
-            <div className="mt-10 flex items-center gap-6">
+            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
               <Link
                 href="/post-requirement"
-                className="inline-flex items-center justify-center px-10 py-4 bg-blue-600 text-white rounded-xl text-lg font-medium shadow-lg hover:bg-blue-700 transition"
+                className="
+                  inline-flex items-center justify-center
+                  whitespace-nowrap
+                  px-6 py-3
+                  text-base
+                  sm:px-8 sm:py-4
+                  sm:text-lg
+                  bg-blue-600 text-white
+                  rounded-xl font-medium
+                  shadow-lg hover:bg-blue-700 transition
+                  animate-softPulse sm:animate-none
+                "
               >
                 Post Your Requirement
               </Link>
@@ -62,8 +91,15 @@ export default function Home() {
       </section>
 
       {/* TRUST */}
-      <section className="py-20 border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-14">
+      <section className="py-12 sm:py-20 border-t border-gray-100">
+        <div
+          className="
+            max-w-7xl mx-auto
+            px-6
+            grid grid-cols-1 md:grid-cols-3
+            gap-10 sm:gap-14
+          "
+        >
           <TrustCard
             icon={<ShieldCheck className="h-7 w-7 text-blue-600" />}
             title="Verified Specialists Only"
