@@ -1,5 +1,6 @@
 import "./globals.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "NeedsGenie",
@@ -12,11 +13,8 @@ export default function RootLayout({ children }) {
       <body className="bg-gray-50 text-gray-900 antialiased min-h-screen">
         <Header />
         {children}
-        <footer className="w-full py-6 text-center text-gray-400 text-sm">
-          © {new Date().getFullYear()} NeedsGenie · All rights reserved
-        </footer>
+        <Footer />
       </body>
     </html>
   );
 }
-

@@ -289,10 +289,17 @@ export default function SpecialistRegister() {
             />
 
 
-            <Select
+            {/* <Select
               label="Are you willing to pay a small fee per verified lead? *"
               value={form.payPerLead}
               options={["Yes", "No"]}
+              onChange={(v) => setField("payPerLead", v)}
+              error={errors.payPerLead}
+            /> */}
+            <Select
+              label="If we send you 2–3 real requirements per week, would you actively follow up?"
+              value={form.payPerLead}
+              options={["Yes, immediately", "Depends on requirement", "No, Just exploring"]}
               onChange={(v) => setField("payPerLead", v)}
               error={errors.payPerLead}
             />

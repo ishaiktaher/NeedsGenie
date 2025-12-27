@@ -121,7 +121,7 @@ export default function Home() {
       </section>
 
       {/* SPECIALIST CTA */}
-      <section className="bg-gray-900 text-white w-full">
+      <section className="bg-gray-700 text-white w-full">
         <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <h3 className="text-2xl font-semibold">
@@ -141,6 +141,7 @@ export default function Home() {
           </Link>
         </div>
       </section>
+
     </main>
   );
 }
