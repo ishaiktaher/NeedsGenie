@@ -3,20 +3,13 @@
 import { useState } from "react";
 import Button from "@/components/Button";
 import Spinner from "@/components/Spinner";
-import AutocompleteInput from "@/components/AutocompleteInput";
-import {
-  searchCities,
-  searchLocalities,
-} from "@/lib/locationSearch";
 import ChipInput from "@/components/ChipInput";
-
-import { INDIAN_STATES } from "@/lib/indianStates";
 import SearchableSelect from "@/components/SearchableSelect";
 import CreatableMultiSelect from "@/components/CreatableMultiSelect";
+import { INDIAN_STATES } from "@/lib/indianStates";
 import { INDUSTRIES } from "@/lib/industries";
 import { LANGUAGES } from "@/lib/languages";
 import useScrollIntoView from "@/hooks/useScrollIntoView";
-
 
 export default function SpecialistRegister() {
   const [step, setStep] = useState(1);
@@ -37,8 +30,6 @@ export default function SpecialistRegister() {
     bestTime: "",
   });
 
-  /* ---------------- Helpers ---------------- */
-
   const setField = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
     setErrors((prev) => {
@@ -48,112 +39,23 @@ export default function SpecialistRegister() {
     });
   };
 
-  const validateStep1 = () => {
-    const e = {};
-
-    if (!form.fullName.trim()) e.fullName = "Full name is required";
-    if (!form.state.trim()) e.state = "State is required";
-    if (!/^\d{10}$/.test(form.mobile))
-      e.mobile = "Enter a valid 10-digit mobile number";
-    if (!Array.isArray(form.city) || form.city.length === 0) {
-      e.city = "Please add at least one city";
-    }
-    if (!Array.isArray(form.localities) || form.localities.length === 0) {
-      e.localities = "Please add at least one locality";
-    }
-
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
-
-  const validateStep2 = () => {
-    const e = {};
-    if (!Array.isArray(form.industries) || form.industries.length === 0) {
-      e.industries = "Please select at least one industry";
-    }
-    if (!Array.isArray(form.languages) || form.languages.length === 0) {
-      e.languages = "Please select at least one language";
-    }
-    if (!form.payPerLead)
-      e.payPerLead = "Please select an option";
-    if (!form.bestTime.trim())
-      e.bestTime = "Best time is required";
-
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
-
-  /* ---------------- Submit ---------------- */
-
-  const submit = async () => {
-    if (!validateStep2()) return;
-
-    try {
-      setLoading(true);
-
-      const normalizedForm = {
-        ...form,
-        industries: [
-          ...new Set(
-            form.industries.map((i) =>
-              i.trim().replace(/\s+/g, " ")
-            )
-          ),
-        ],
-        languages: [
-          ...new Set(
-            form.languages.map((l) =>
-              l.trim().replace(/\s+/g, " ")
-            )
-          ),
-        ],
-        city: [
-          ...new Set(
-            form.city.map((c) =>
-              c.trim().replace(/\s+/g, " ")
-            )
-          ),
-        ],
-        localities: [
-          ...new Set(
-            form.localities.map((a) =>
-              a.trim().replace(/\s+/g, " ")
-            )
-          ),
-        ],
-      };
-
-      const res = await fetch("/api/register-specialist", {
-        method: "POST",
-        body: JSON.stringify(normalizedForm),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!res.ok) throw new Error();
-
-      window.location.href = "/specialist/thank-you";
-    } catch (err) {
-      alert("Something went wrong. Please try again.");
-      setLoading(false);
-    }
-  };
-
   /* ---------------- UI ---------------- */
 
   return (
-    // <main className="min-h-screen bg-gray-50 flex items-center justify-center px-6 py-10">
-    <main className="min-h-screen bg-gray-50 px-4 py-6 sm:pb-0 sm:flex sm:items-center sm:justify-center">
-
+    <main className="min-h-screen bg-gray-50 px-4 py-6 sm:flex sm:items-center sm:justify-center">
       <div className="w-full max-w-xl bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
 
         {/* HEADER */}
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Join as an Industry Specialist
+          Join NeedsGenie as a Verified Specialist
         </h1>
-        <p className="text-gray-600 mb-8">
-          Get access to verified, high-intent customer requirements.
+
+        <p className="text-gray-600 mb-6">
+          Get genuine, high-intent client requirements — without cold calling or public listings.
+          <br />
+          <span className="text-sm text-gray-500">
+            Free to join · No obligation · Takes ~2 minutes
+          </span>
         </p>
 
         {/* PROGRESS */}
@@ -165,17 +67,16 @@ export default function SpecialistRegister() {
         {/* STEP 1 */}
         {step === 1 && (
           <div className="space-y-4">
+
             <Input
-              tabIndex={1}
-              label="Full Name *"
+              label="Your Full Name *"
               value={form.fullName}
               onChange={(v) => setField("fullName", v)}
               error={errors.fullName}
             />
 
             <Input
-              tabIndex={2}
-              label="Mobile Number *"
+              label="Primary Contact Number *"
               value={form.mobile}
               numeric
               onChange={(v) =>
@@ -183,9 +84,11 @@ export default function SpecialistRegister() {
               }
               error={errors.mobile}
             />
+            <p className="text-xs text-gray-500">
+              Shared only after you choose to respond to a requirement.
+            </p>
 
             <Input
-              tabIndex={3}
               label="WhatsApp Number (optional)"
               value={form.whatsapp}
               numeric
@@ -195,8 +98,7 @@ export default function SpecialistRegister() {
             />
 
             <SearchableSelect
-              tabIndex={4}
-              label="State *"
+              label="Primary State You Operate In *"
               value={form.state}
               options={INDIAN_STATES}
               placeholder="Select state"
@@ -208,56 +110,30 @@ export default function SpecialistRegister() {
               error={errors.state}
             />
 
-            {/* <AutocompleteInput
-              label="City *"
-              value={form.city}
-              disabled={!form.state}
-              fetchOptions={(q) => searchCities(q, form.state)}
-              onChange={(v) => {
-                setField("city", v);
-                setSelectedCity(null);
-                setField("localities", "");
-              }}
-              onSelect={(city) => {
-                setField("city", city.label);
-                setSelectedCity(city);
-                setField("localities", "");
-              }}
-              error={errors.city}
-            /> */}
-
             <ChipInput
-              tabIndex={5}
               ref={cityScroll.ref}
               onFocus={cityScroll.onFocus}
-              label="Cities you serve *"
+              label="Cities You Serve *"
               value={form.city}
               onChange={(v) => setField("city", v)}
               placeholder="Type city and press comma"
               error={errors.city}
             />
+            <p className="text-xs text-gray-500">
+              We’ll only send enquiries from these cities or nearby areas.
+            </p>
 
-            {/* <AutocompleteInput
-              label="Localities / Areas you serve *"
-              value={form.localities}
-              disabled={!selectedCity}
-              fetchOptions={(q) => searchLocalities(q, selectedCity)}
-              onChange={(v) => setField("localities", v)}
-              error={errors.localities}
-            /> */}
             <ChipInput
-              tabIndex={6}
-              label="Localities / Areas you serve *"
+              label="Preferred Localities / Areas *"
               value={form.localities}
               onChange={(v) => setField("localities", v)}
-              placeholder="Type area and press comma or click outside"
+              placeholder="Type area and press comma"
               error={errors.localities}
             />
 
             <div className="mt-8 flex justify-center">
               <Button
-                tabIndex={7}
-                onClick={() => validateStep1() && setStep(2)}
+                onClick={() => setStep(2)}
                 className="px-8 py-3 text-lg min-w-[200px]"
               >
                 Continue
@@ -269,94 +145,91 @@ export default function SpecialistRegister() {
         {/* STEP 2 */}
         {step === 2 && (
           <div className="space-y-4">
+
             <CreatableMultiSelect
-              label="Industries you work in *"
+              label="Your Area(s) of Expertise *"
               value={form.industries}
               options={INDUSTRIES}
-              placeholder="Type or select industry"
+              placeholder="Select or type what you work on"
               onChange={(v) => setField("industries", v)}
               error={errors.industries}
             />
-
+            <p className="text-xs text-gray-500">
+              Selecting accurately helps avoid irrelevant leads.
+            </p>
 
             <CreatableMultiSelect
-              label="Languages you speak *"
+              label="Languages You Can Communicate In *"
               value={form.languages}
               options={LANGUAGES}
-              placeholder="Type or select languages"
+              placeholder="Select or type languages"
               onChange={(v) => setField("languages", v)}
               error={errors.languages}
             />
 
-
-            {/* <Select
-              label="Are you willing to pay a small fee per verified lead? *"
-              value={form.payPerLead}
-              options={["Yes", "No"]}
-              onChange={(v) => setField("payPerLead", v)}
-              error={errors.payPerLead}
-            /> */}
             <Select
               label="If we send you 2–3 real requirements per week, would you actively follow up?"
               value={form.payPerLead}
-              options={["Yes, immediately", "Depends on requirement", "No, Just exploring"]}
+              options={[
+                "Yes, immediately",
+                "Depends on the requirement",
+                "No, just exploring",
+              ]}
               onChange={(v) => setField("payPerLead", v)}
               error={errors.payPerLead}
             />
-            {/* 
-            <Input
-              label="Best time to contact you *"
-              placeholder="Morning / Afternoon / Evening"
-              value={form.bestTime}
-              onChange={(v) => setField("bestTime", v)}
-              error={errors.bestTime}
-            /> */}
 
             <Select
-              label="Best time to contact you *"
+              label="Best Time to Receive Client Calls *"
               value={form.bestTime}
-              options={[
-                "Morning",
-                "Afternoon",
-                "Evening",
-                "Anytime",
-              ]}
+              options={["Morning", "Afternoon", "Evening", "Anytime"]}
               onChange={(v) => setField("bestTime", v)}
               error={errors.bestTime}
             />
 
+            {/* TRUST BLOCK */}
+            <div className="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
+              <p className="font-medium text-gray-800 mb-2">
+                How NeedsGenie works
+              </p>
+              <ul className="space-y-1 list-disc list-inside">
+                <li>You receive verified client requirements</li>
+                <li>Your number is never publicly listed</li>
+                <li>You choose which enquiries to respond to</li>
+                <li>No spam · No cold leads</li>
+              </ul>
+            </div>
 
-            <div className="mt-6 flex justify-between">
+            <div className="mt-6 flex justify-between items-center">
               <button
                 disabled={loading}
-                className={`text-gray-500 ${loading ? "opacity-50 cursor-not-allowed" : "hover:underline"}`}
+                className="text-gray-500 hover:underline"
                 onClick={() => setStep(1)}
               >
                 ← Back
               </button>
 
               <Button
-                onClick={submit}
+                onClick={() => {}}
                 disabled={loading}
-                className="px-6 py-3 min-w-[220px] flex items-center justify-center gap-2"
+                className="px-6 py-3 min-w-[240px] flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>
                     <Spinner size="sm" />
-                    <span>Submitting...</span>
+                    Submitting…
                   </>
                 ) : (
-                  "Submit Registration"
+                  "Register as a Verified Specialist"
                 )}
               </Button>
             </div>
+
+            <p className="text-xs text-gray-500 text-center mt-4">
+              We review every application and usually respond within 24–48 hours.
+            </p>
           </div>
         )}
-
-        {/* TRUST FOOTER */}
-        <p className="text-xs text-gray-400 mt-10 text-center">
-          Your information is kept confidential and used only to connect you with relevant customer requirements.
-        </p>
       </div>
     </main>
   );
@@ -375,8 +248,9 @@ function Input({ label, placeholder, value, onChange, error, numeric }) {
         placeholder={placeholder}
         inputMode={numeric ? "numeric" : undefined}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full rounded-lg border px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none ${error ? "border-red-500" : "border-gray-300"
-          }`}
+        className={`w-full rounded-lg border px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+          error ? "border-red-500" : "border-gray-300"
+        }`}
       />
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
@@ -392,8 +266,9 @@ function Select({ label, options, value, onChange, error }) {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full rounded-lg border px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none ${error ? "border-red-500" : "border-gray-300"
-          }`}
+        className={`w-full rounded-lg border px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+          error ? "border-red-500" : "border-gray-300"
+        }`}
       >
         <option value="">Select</option>
         {options.map((o) => (
