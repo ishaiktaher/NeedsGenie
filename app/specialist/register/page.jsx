@@ -144,7 +144,7 @@ export default function SpecialistRegister() {
 
   return (
     // <main className="min-h-screen bg-gray-50 flex items-center justify-center px-6 py-10">
-    <main className="min-h-screen bg-gray-50 px-4 py-6 pb-[40vh] sm:pb-0 sm:flex sm:items-center sm:justify-center">
+    <main className="min-h-screen bg-gray-50 px-4 py-6 sm:pb-0 sm:flex sm:items-center sm:justify-center">
 
       <div className="w-full max-w-xl bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
 

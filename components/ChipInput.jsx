@@ -56,7 +56,7 @@ const ChipInput = forwardRef(({ onFocus, label, value = [], onChange, placeholde
           error ? "border-red-500" : "border-gray-300"
         }`}
       >
-        {value.map((chip) => (
+        {(Array.isArray(value) ? value : []).map((chip) => (
           <span
             key={chip}
             className="flex items-center gap-1 bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-sm"
