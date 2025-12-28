@@ -30,6 +30,8 @@ export default function SpecialistRegister() {
     bestTime: "",
   });
 
+  /* ---------------- Helpers ---------------- */
+
   const setField = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
     setErrors((prev) => {
@@ -37,6 +39,65 @@ export default function SpecialistRegister() {
       delete copy[key];
       return copy;
     });
+  };
+
+  const validateStep1 = () => {
+    const e = {};
+    if (!form.fullName.trim()) e.fullName = "Full name is required";
+    if (!form.state.trim()) e.state = "State is required";
+    if (!/^\d{10}$/.test(form.mobile))
+      e.mobile = "Enter a valid 10-digit mobile number";
+    if (!Array.isArray(form.city) || form.city.length === 0)
+      e.city = "Please add at least one city";
+    if (!Array.isArray(form.localities) || form.localities.length === 0)
+      e.localities = "Please add at least one locality";
+
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const validateStep2 = () => {
+    const e = {};
+    if (!Array.isArray(form.industries) || form.industries.length === 0)
+      e.industries = "Please select at least one area of expertise";
+    if (!Array.isArray(form.languages) || form.languages.length === 0)
+      e.languages = "Please select at least one language";
+    if (!form.payPerLead) e.payPerLead = "Please select an option";
+    if (!form.bestTime.trim()) e.bestTime = "Best time is required";
+
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  /* ---------------- Submit ---------------- */
+
+  const submit = async () => {
+    if (!validateStep2()) return;
+
+    try {
+      setLoading(true);
+
+      const normalizedForm = {
+        ...form,
+        industries: [...new Set(form.industries.map((i) => i.trim()))],
+        languages: [...new Set(form.languages.map((l) => l.trim()))],
+        city: [...new Set(form.city.map((c) => c.trim()))],
+        localities: [...new Set(form.localities.map((a) => a.trim()))],
+      };
+
+      const res = await fetch("/api/register-specialist", {
+        method: "POST",
+        body: JSON.stringify(normalizedForm),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) throw new Error();
+
+      window.location.href = "/specialist/thank-you";
+    } catch {
+      alert("Something went wrong. Please try again.");
+      setLoading(false);
+    }
   };
 
   /* ---------------- UI ---------------- */
@@ -67,7 +128,6 @@ export default function SpecialistRegister() {
         {/* STEP 1 */}
         {step === 1 && (
           <div className="space-y-4">
-
             <Input
               label="Your Full Name *"
               value={form.fullName}
@@ -119,9 +179,6 @@ export default function SpecialistRegister() {
               placeholder="Type city and press comma"
               error={errors.city}
             />
-            <p className="text-xs text-gray-500">
-              We’ll only send enquiries from these cities or nearby areas.
-            </p>
 
             <ChipInput
               label="Preferred Localities / Areas *"
@@ -133,7 +190,7 @@ export default function SpecialistRegister() {
 
             <div className="mt-8 flex justify-center">
               <Button
-                onClick={() => setStep(2)}
+                onClick={() => validateStep1() && setStep(2)}
                 className="px-8 py-3 text-lg min-w-[200px]"
               >
                 Continue
@@ -154,9 +211,6 @@ export default function SpecialistRegister() {
               onChange={(v) => setField("industries", v)}
               error={errors.industries}
             />
-            <p className="text-xs text-gray-500">
-              Selecting accurately helps avoid irrelevant leads.
-            </p>
 
             <CreatableMultiSelect
               label="Languages You Can Communicate In *"
@@ -168,7 +222,7 @@ export default function SpecialistRegister() {
             />
 
             <Select
-              label="If we send you 2–3 real requirements per week, would you actively follow up?"
+              label="If we send you 2–3 real requirements per week, would you actively follow up? *"
               value={form.payPerLead}
               options={[
                 "Yes, immediately",
@@ -203,14 +257,16 @@ export default function SpecialistRegister() {
             <div className="mt-6 flex justify-between items-center">
               <button
                 disabled={loading}
-                className="text-gray-500 hover:underline"
+                className={`text-gray-500 ${
+                  loading ? "opacity-50 cursor-not-allowed" : "hover:underline"
+                }`}
                 onClick={() => setStep(1)}
               >
                 ← Back
               </button>
 
               <Button
-                onClick={() => {}}
+                onClick={submit}
                 disabled={loading}
                 className="px-6 py-3 min-w-[240px] flex items-center justify-center gap-2"
               >
