@@ -284,6 +284,25 @@ export default function SpecialistRegister() {
             <p className="text-xs text-gray-500 text-center mt-4">
               We review every application and usually respond within 24–48 hours.
             </p>
+
+            <p className="text-xs text-gray-500 text-center mt-4">
+              Questions? Reach us at
+              📧 <a
+                href="mailto:needsgenieapp@gmail.com"
+                className="hover:underline"
+              >
+                needsgenieapp@gmail.com
+              </a>
+              📱 WhatsApp:  <a
+                href="https://wa.me/919052555510"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                9052555510
+              </a>
+
+            </p>
           </div>
         )}
       </div>

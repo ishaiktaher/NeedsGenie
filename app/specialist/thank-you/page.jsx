@@ -62,6 +62,14 @@ export default function SpecialistThankYou() {
           <p className="text-sm text-gray-500">
             We’ll contact you once your profile is verified.
           </p>
+
+          <p className="text-sm text-gray-500">
+            Our team will review your details.
+            If you need anything in the meantime:
+            📧 needsgenieapp@gmail.com
+            📱 WhatsApp: 9052555510
+
+          </p>
         </div>
 
       </div>
