@@ -4,9 +4,9 @@ export default function Footer() {
   return (
     <footer className="bg-gray-100 border-t border-gray-300">
       {/* Desktop visual anchor */}
-      <div className="hidden sm:block h-2 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200" />
+      {/* <div className="hidden sm:block h-2 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200" /> */}
 
-      <div className="max-w-7xl mx-auto px-6 py-10">
+      <div className="max-w-7xl mx-auto px-6 pt-10 pb-3">
 
         {/* MOBILE */}
         <div className="flex flex-col items-center text-center gap-6 sm:hidden">

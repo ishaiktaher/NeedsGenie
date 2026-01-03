@@ -13,9 +13,7 @@ export default function RootLayout({ children }) {
       <body className="bg-gray-50 text-gray-900 antialiased min-h-screen">
         <Header />
         {children}
-        <section className="sm:pt-2">
         <Footer />
-        </section>
       </body>
     </html>
   );
